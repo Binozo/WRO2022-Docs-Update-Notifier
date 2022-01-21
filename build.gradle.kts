@@ -5,7 +5,7 @@ plugins {
     application
 }
 
-group = "com.binozoworks.fastvertretungsplanchecker"
+group = "com.binozoworks.wro2022_docs_update_notifier"
 version = "1.0-SNAPSHOT"
 
 repositories {
