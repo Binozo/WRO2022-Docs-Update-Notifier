@@ -12,6 +12,7 @@ import kotlin.system.exitProcess
 class DocsUpdateNotifier {
     private val httpClient = OkHttpClient()
     private val wroPageUrl = "https://www.worldrobotolympiad.de/saison-2022/robomission-senior"
+    private val wroFAQUrl = "https://www.worldrobotolympiad.de/saison-2022/faq"
     private val propertyFileHandler = PropertyFileHandler()
     private lateinit var jda: JDA
     private val wroPageParser = WROPageParser()
@@ -51,6 +52,7 @@ class DocsUpdateNotifier {
         return CoroutineScope(Dispatchers.Default).launch {
             while (NonCancellable.isActive) {
                 checkIfNewDocsAvailable()
+                checkIfNewFAQsAvailable()
                 delay(timeInterval)
             }
         }
@@ -117,6 +119,32 @@ class DocsUpdateNotifier {
             }
 
 
+        }else{
+            println("Connection to WRO page failed: ${response.code}")
+        }
+    }
+
+    private fun checkIfNewFAQsAvailable(){
+        val response = httpClient.newCall(Request.Builder().url(wroFAQUrl).build()).execute()
+        val responseBody = response.body?.string()
+        if(responseBody != null){
+            //parse response
+            val doc = wroPageParser.parseBody(responseBody)
+            val md5Hash = wroPageParser.getQuestionsHash(doc)
+
+            val oldHash = propertyFileHandler.getProperty(propertyFileHandler.questionsHashProperty)
+            if(oldHash == null) {
+                println(propertyFileHandler.questionsHashProperty + " not found in property file. Setting to " + md5Hash)
+                propertyFileHandler.setProperty(propertyFileHandler.questionsHashProperty, md5Hash)
+                return
+            }
+
+            if(oldHash != md5Hash){
+                //questions have changed or new one has been added
+                println("New questions in the FAQ section found")
+                sendDiscordMessage("The FAQ section has been updated! \n$wroFAQUrl")
+                propertyFileHandler.setProperty(propertyFileHandler.questionsHashProperty, md5Hash)
+            }
         }else{
             println("Connection to WRO page failed: ${response.code}")
         }

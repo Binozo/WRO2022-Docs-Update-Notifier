@@ -1,6 +1,8 @@
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import java.math.BigInteger
+import java.security.MessageDigest
 
 class WROPageParser {
     private val wroContentClass = "wro-content"
@@ -33,7 +35,24 @@ class WROPageParser {
         return versionRaw?.let { parseVersion(it) } // result: 15.01.2022
     }
 
+    public fun getQuestionsHash(doc: Document): String {
+        //search for divs with card-header class
+        val cardElements = doc.getElementsByClass("card-header")
+        //search for header text
+        val cardHeaderElements = cardElements.map { it.text() }
+        //search for text in cards
+        val cardTextElements = cardElements.map { it.nextElementSibling()?.text() }
 
+        //generate md5 hash from cardHeaderElements and cardTextElements
+        val md5 = md5Hash(cardHeaderElements.joinToString("") + cardTextElements.joinToString("")) //convert cardHeaderElements and cardTextElements to string
+        return md5
+    }
+
+    fun md5Hash(str: String): String {
+        val md = MessageDigest.getInstance("MD5")
+        val bigInt = BigInteger(1, md.digest(str.toByteArray(Charsets.UTF_8)))
+        return String.format("%032x", bigInt)
+    }
 
     private fun getContentList(doc: Document): Element? {
         //searching for right div
