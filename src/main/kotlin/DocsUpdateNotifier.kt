@@ -31,11 +31,12 @@ class DocsUpdateNotifier {
             .build().awaitReady()
 
         //read text channel id
-        val textChannelID = propertyFileHandler.getProperty("discordTextChannelID")
-        if(textChannelID == null){
+        val textChannelIDFromStorage = propertyFileHandler.getProperty("discordTextChannelID")
+        if(textChannelIDFromStorage == null){
             println("No \"discordTextChannelID\" found in property file")
             exitProcess(-1)
         }
+        textChannelID = textChannelIDFromStorage
         //check if text channel exists
         val textChannel = jda.getTextChannelById(textChannelID)
         if(textChannel == null){
@@ -45,14 +46,26 @@ class DocsUpdateNotifier {
     }
 
     public fun startListening(checkDelayInMs: Long){
+        val handler = CoroutineExceptionHandler { _, exception ->
+            println("Caught coroutine exception: $exception. Restarting...")
+            startListening(checkDelayInMs)
+        }
         val job: Job = startRepeatingJob(checkDelayInMs)
     }
 
     private fun startRepeatingJob(timeInterval: Long): Job {
         return CoroutineScope(Dispatchers.Default).launch {
             while (NonCancellable.isActive) {
-                checkIfNewDocsAvailable()
-                checkIfNewFAQsAvailable()
+                try{
+                    checkIfNewDocsAvailable()
+                }catch (e: Exception){
+                    println("Exception while checking for new docs: $e")
+                }
+                try{
+                    checkIfNewFAQsAvailable()
+                }catch (e: Exception){
+                    println("Exception while checking for new FAQs: $e")
+                }
                 delay(timeInterval)
             }
         }
