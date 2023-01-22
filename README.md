@@ -14,6 +14,7 @@ services:
   wro-update-notifier:
     restart: always
     image: "ghcr.io/binozo/wro2022-docs-update-notifier:latest"
+    container_name: "wro-update-notifier"
     environment:
       discordToken: xxx
       discordTextChannelID: xxx
