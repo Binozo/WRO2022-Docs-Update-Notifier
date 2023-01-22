@@ -2,3 +2,4 @@
 /.gradle/
 .gitignore
 /config.properties
+/build/
