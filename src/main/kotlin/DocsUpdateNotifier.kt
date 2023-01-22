@@ -9,11 +9,11 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import kotlin.system.exitProcess
 
-class DocsUpdateNotifier {
+class DocsUpdateNotifier(propertyFileHandler: PropertyFileHandler) {
     private val httpClient = OkHttpClient()
     private val wroPageUrl = "https://www.worldrobotolympiad.de/saison-2022/robomission-senior"
     private val wroFAQUrl = "https://www.worldrobotolympiad.de/saison-2022/faq"
-    private val propertyFileHandler = PropertyFileHandler()
+    private val propertyFileHandler = propertyFileHandler
     private lateinit var jda: JDA
     private val wroPageParser = WROPageParser()
     private lateinit var textChannelID: String
