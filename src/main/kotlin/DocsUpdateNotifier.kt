@@ -27,7 +27,7 @@ class DocsUpdateNotifier(propertyFileHandler: PropertyFileHandler) {
         }
         jda = JDABuilder
             .createDefault(discordToken)
-            .setActivity(Activity.playing("WRO 2022")) // optional
+            .setActivity(Activity.playing("WRO 2023")) // optional
             .build().awaitReady()
 
         //read text channel id
