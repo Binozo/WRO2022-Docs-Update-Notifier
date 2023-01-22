@@ -12,7 +12,7 @@ import kotlin.system.exitProcess
 class DocsUpdateNotifier(propertyFileHandler: PropertyFileHandler) {
     private val httpClient = OkHttpClient()
     private val wroPageUrl = "https://www.worldrobotolympiad.de/saison-2022/robomission-senior"
-    private val wroFAQUrl = "https://www.worldrobotolympiad.de/saison-2022/faq"
+    private val wroFAQUrl = "https://www.worldrobotolympiad.de/saison-2023/faq"
     private val propertyFileHandler = propertyFileHandler
     private lateinit var jda: JDA
     private val wroPageParser = WROPageParser()
@@ -57,7 +57,7 @@ class DocsUpdateNotifier(propertyFileHandler: PropertyFileHandler) {
         return CoroutineScope(Dispatchers.Default).launch {
             while (NonCancellable.isActive) {
                 try{
-                    checkIfNewDocsAvailable()
+                    //checkIfNewDocsAvailable()
                 }catch (e: Exception){
                     println("Exception while checking for new docs: $e")
                 }
