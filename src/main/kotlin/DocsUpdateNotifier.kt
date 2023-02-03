@@ -13,6 +13,7 @@ class DocsUpdateNotifier(propertyFileHandler: PropertyFileHandler) {
     private val httpClient = OkHttpClient()
     private val wroPageUrl = "https://www.worldrobotolympiad.de/saison-2022/robomission-senior"
     private val wroFAQUrl = "https://www.worldrobotolympiad.de/saison-2023/faq"
+    private val wroTeamsUrl = "https://www.worldrobotolympiad.de/saison-2023/wettbewerbe/358/heidelberg"
     private val propertyFileHandler = propertyFileHandler
     private lateinit var jda: JDA
     private val wroPageParser = WROPageParser()
@@ -57,7 +58,7 @@ class DocsUpdateNotifier(propertyFileHandler: PropertyFileHandler) {
         return CoroutineScope(Dispatchers.Default).launch {
             while (NonCancellable.isActive) {
                 try{
-                    //checkIfNewDocsAvailable()
+                    checkIfNewTeamRegistered()
                 }catch (e: Exception){
                     println("Exception while checking for new docs: $e")
                 }
@@ -68,6 +69,34 @@ class DocsUpdateNotifier(propertyFileHandler: PropertyFileHandler) {
                 }
                 delay(timeInterval)
             }
+        }
+    }
+
+    private fun checkIfNewTeamRegistered(){
+        val response = httpClient.newCall(Request.Builder().url(wroTeamsUrl).build()).execute()
+        val responseBody = response.body?.string()
+        if(responseBody != null){
+            //parse response
+            val doc = wroPageParser.parseBody(responseBody)
+            val teams = wroPageParser.getTeamsNames(doc)
+            val md5Hash = wroPageParser.getTeamsNamesHash(teams)
+
+            val oldHash = propertyFileHandler.getProperty(propertyFileHandler.teamsHashProperty)
+            if(oldHash == null) {
+                println(propertyFileHandler.teamsHashProperty + " not found in property file. Setting to " + md5Hash)
+                propertyFileHandler.setProperty(propertyFileHandler.teamsHashProperty, md5Hash)
+                return
+            }
+
+            if(oldHash != md5Hash){
+                //questions have changed or new one has been added
+                println("New team joined")
+                val teamsString = teams.joinToString("\n")
+                sendDiscordMessage("Team list updated!\nSummary of all team names:\n\n$teamsString\n\n$wroTeamsUrl")
+                propertyFileHandler.setProperty(propertyFileHandler.teamsHashProperty, md5Hash)
+            }
+        }else{
+            println("Connection to WRO page failed: ${response.code}")
         }
     }
 

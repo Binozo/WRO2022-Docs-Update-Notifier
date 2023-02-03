@@ -11,6 +11,7 @@ class PropertyFileHandler {
     val bewertungsbogenProperty = "bewertungsbogenVersion"
     val rulesProperty = "rulesVersion"
     val questionsHashProperty = "questionsHash"
+    val teamsHashProperty = "teamsCountHash"
 
     init{
         //Check if property file exists

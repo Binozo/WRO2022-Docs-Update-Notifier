@@ -35,6 +35,27 @@ class WROPageParser {
         return versionRaw?.let { parseVersion(it) } // result: 15.01.2022
     }
 
+    public fun getTeamsNames(doc: Document): List<String> {
+        val tableElements = doc.getElementsByClass("wro-result-table")
+        val tableEntries = tableElements.map { it.getElementsByTag("tr")} // get raw table entries
+        val teamNames = mutableListOf<String>()
+
+        tableEntries.forEach {
+            it.forEach {
+                if(!it.hasClass("titelzeile")) {
+                    teamNames.add(it.getElementsByTag("td").get(1).text())
+                }
+
+            }
+        }
+
+        return teamNames
+    }
+
+    public fun getTeamsNamesHash(teams: List<String>): String {
+        return md5Hash(teams.joinToString("-"))
+    }
+
     public fun getQuestionsHash(doc: Document): String {
         //search for divs with card-header class
         val cardElements = doc.getElementsByClass("card-header")

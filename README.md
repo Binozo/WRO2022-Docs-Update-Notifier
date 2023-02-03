@@ -1,6 +1,6 @@
 # WRO 2022 Document Update Notifier
 A simple Discord Bot which notifies you if a version change of documents or FAQ has been detected.
-Only tested on https://www.worldrobotolympiad.de/saison-2022/robomission-senior, https://www.worldrobotolympiad.de/saison-2022/faq and https://www.worldrobotolympiad.de/saison-2023/faq
+Tested on https://www.worldrobotolympiad.de/saison-2022/robomission-senior, https://www.worldrobotolympiad.de/saison-2022/faq, https://www.worldrobotolympiad.de/saison-2023/faq and https://www.worldrobotolympiad.de/saison-2023/wettbewerbe/358/heidelberg
 
 ## Installation
 ### jar
