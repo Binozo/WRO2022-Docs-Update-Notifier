@@ -12,7 +12,7 @@ import kotlin.system.exitProcess
 class DocsUpdateNotifier(propertyFileHandler: PropertyFileHandler) {
     private val httpClient = OkHttpClient()
     private val wroPageUrl = "https://www.worldrobotolympiad.de/saison-2022/robomission-senior"
-    private val wroFAQUrl = "https://www.worldrobotolympiad.de/saison-2023/faq"
+    private val wroFAQUrl = "https://www.worldrobotolympiad.de/saison-2024/faq"
     private val wroTeamsUrl = "https://www.worldrobotolympiad.de/saison-2024/wettbewerbe/390/heidelberg"
     private val propertyFileHandler = propertyFileHandler
     private lateinit var jda: JDA
