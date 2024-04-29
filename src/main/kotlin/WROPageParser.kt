@@ -3,7 +3,6 @@ import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.math.BigInteger
 import java.security.MessageDigest
-import java.util.Base64
 
 class WROPageParser {
     private val wroContentClass = "wro-content"
@@ -55,14 +54,6 @@ class WROPageParser {
 
     public fun getTeamsNamesHash(teams: List<String>): String {
         return md5Hash(teams.joinToString("-"))
-    }
-
-    public fun getTeamsNamesEncoded(teams: List<String>): String {
-        return Base64.getEncoder().encodeToString(teams.joinToString("-").toByteArray())
-    }
-
-    public fun decodeTeamNames(teamsBase64: String): List<String> {
-        return Base64.getDecoder().decode(teamsBase64).toString().split("-")
     }
 
     public fun getQuestionsHash(doc: Document): String {

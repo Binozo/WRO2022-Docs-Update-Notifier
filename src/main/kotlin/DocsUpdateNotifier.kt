@@ -79,26 +79,21 @@ class DocsUpdateNotifier(propertyFileHandler: PropertyFileHandler) {
             //parse response
             val doc = wroPageParser.parseBody(responseBody)
             val teams = wroPageParser.getTeamsNames(doc)
-            val encodedTeamNames = wroPageParser.getTeamsNamesEncoded(teams)
+            val md5Hash = wroPageParser.getTeamsNamesHash(teams)
 
-            val oldBase64TeamNames = propertyFileHandler.getProperty(propertyFileHandler.teamNames)
-            if(oldBase64TeamNames == null) {
-                println(propertyFileHandler.teamNames + " not found in property file. Setting to " + encodedTeamNames)
-                propertyFileHandler.setProperty(propertyFileHandler.teamNames, encodedTeamNames)
+            val oldHash = propertyFileHandler.getProperty(propertyFileHandler.teamsHashProperty)
+            if(oldHash == null) {
+                println(propertyFileHandler.teamsHashProperty + " not found in property file. Setting to " + md5Hash)
+                propertyFileHandler.setProperty(propertyFileHandler.teamsHashProperty, md5Hash)
                 return
             }
 
-            if(encodedTeamNames != oldBase64TeamNames){
-                val oldTeamNames = wroPageParser.decodeTeamNames(oldBase64TeamNames)
+            if(oldHash != md5Hash){
                 //questions have changed or new one has been added
                 println("New team joined")
-                val newTeamNames = teams.filter { localObject ->
-                    oldTeamNames.all { it != localObject }
-                }
-                val newTeams = newTeamNames.joinToString(" is new \uD83D\uDC4B \n")
                 val teamsString = teams.joinToString("\n")
-                sendDiscordMessage("Team list updated!\nSummary of all team names:\n\n$teamsString\n\n$newTeams\n\n$wroTeamsUrl")
-                propertyFileHandler.setProperty(propertyFileHandler.teamNames, encodedTeamNames)
+                sendDiscordMessage("Team list updated!\nSummary of all team names:\n\n$teamsString\n\n$wroTeamsUrl")
+                propertyFileHandler.setProperty(propertyFileHandler.teamsHashProperty, md5Hash)
             }
         }else{
             println("Connection to WRO page failed: ${response.code}")

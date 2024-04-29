@@ -12,7 +12,6 @@ class PropertyFileHandler {
     val rulesProperty = "rulesVersion"
     val questionsHashProperty = "questionsHash"
     val teamsHashProperty = "teamsCountHash"
-    val teamNames = "teamNames"
 
     init{
         //Check if property file exists
