@@ -92,16 +92,9 @@ class DocsUpdateNotifier(propertyFileHandler: PropertyFileHandler) {
                 val oldTeamNames = wroPageParser.decodeTeamNames(oldBase64TeamNames)
                 //questions have changed or new one has been added
                 println("New team joined")
-                println("Saved Team Names: " + oldTeamNames.joinToString("\n"))
-                println("New Team Names: " + teams.joinToString("\n"))
-                val newTeamNames = mutableListOf<String>()
-                teams.forEach {
-                    if (!oldTeamNames.contains(it)) {
-                        // New team!
-                        newTeamNames.add(it)
-                    }
+                val newTeamNames = teams.filter { localObject ->
+                    oldTeamNames.all { it != localObject }
                 }
-
                 val newTeams = newTeamNames.joinToString(" is new \uD83D\uDC4B \n")
                 val teamsString = teams.joinToString("\n")
                 sendDiscordMessage("Team list updated!\nSummary of all team names:\n\n$teamsString\n\n$newTeams\n\n$wroTeamsUrl")
